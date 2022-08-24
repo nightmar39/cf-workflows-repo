@@ -1,0 +1,50 @@
+apiVersion: argoproj.io/v1alpha1
+kind: WorkflowTemplate
+metadata: 
+  name: update-deploy-tag
+spec:
+  entrypoint: update-tag
+  arguments:
+    parameters:
+    - name: NEW_IMAGE
+    - name: NEW_TAG
+    - name: GIT_USER
+    - name: DEPLOYMENT_FILE
+    - name: CONTAINER_NAME
+    - name: COMMITER_EMAIL
+    - name: BRANCH
+    - name: REPO_OWNER
+    - name: REPO_NAME
+  templates:
+    - name: update-tag
+      inputs:
+        parameters: 
+          - name: NEW_IMAGE
+          - name: NEW_TAG
+          - name: DEPLOYMENT_FILE
+          - name: CONTAINER_NAME
+          - name: COMMITER_EMAIL
+          - name: BRANCH
+          - name: GIT_USER
+          - name: REPO_OWNER
+          - name: REPO_NAME
+      script:
+        image: docker.io/nightmar39/git-yq
+        command: [bash]
+        env: 
+          - name: GIT_TOKEN
+            valueFrom: 
+              secretKeyRef:
+                name: github-token
+                key: token
+        source: |
+          #!bin/bash 
+          git config --global user.email "{{inputs.parameters.COMMITER_EMAIL}}"
+          git clone -b "{{inputs.parameters.BRANCH}}" https://"{{inputs.parameters.GIT_USER}}":$GIT_TOKEN@github.com/"{{inputs.parameters.REPO_OWNER}}"/"{{inputs.parameters.REPO_NAME}}".git tmp 
+          cd tmp 
+          export ARTIFACT="{{inputs.parameters.NEW_IMAGE}}":"{{inputs.parameters.NEW_TAG}}"
+          echo $ARTIFACT
+          yq -iv '(.spec.template.spec.containers[] | select(.name == "{{inputs.parameters.CONTAINER_NAME}}") | .image) = env(ARTIFACT) ' deployment.yml 
+          git add "{{inputs.parameters.DEPLOYMENT_FILE}}"
+          git commit -m 'updating tag to "{{inputs.parameters.NEW_TAG}}"'
+          git push https://"{{inputs.parameters.GIT_USER}}":$GIT_TOKEN@github.com/"{{inputs.parameters.REPO_OWNER}}"/"{{inputs.parameters.REPO_NAME}}".git "{{inputs.parameters.BRANCH}}"

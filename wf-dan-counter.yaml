@@ -1,0 +1,23 @@
+apiVersion: argoproj.io/v1alpha1
+kind: WorkflowTempate
+metadata:
+  name: wf-print-loop
+spec:
+  entrypoint: step-loops
+  arguments: 
+    parameters: 
+      - name: counter
+        value: 0 
+  templates:
+  - name: step-loop
+    steps: 
+      - - name: printOne
+          template: task-template 
+          arguments: 
+              parameters : [{ name: counter}]
+  - name: task-template
+    script:
+      image: python:3.8-slim
+      command: [python]
+      source: |
+        print("Task executed.")
