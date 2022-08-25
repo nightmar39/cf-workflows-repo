@@ -11,7 +11,8 @@ spec:
   templates:
   - name: step-loops
     steps: 
-      -   name: printN
+      - 
+        - name: printN
           template: task-template 
           arguments: 
               parameters : [{ name: counter, value: "{{item}}" }]
