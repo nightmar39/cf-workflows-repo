@@ -9,7 +9,7 @@ spec:
       - name: counter
         value: 0 
   templates:
-  - name: step-loop
+  - name: step-loops
     steps: 
       - - name: printOne
           template: task-template 
