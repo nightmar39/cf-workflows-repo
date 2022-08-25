@@ -9,19 +9,20 @@ spec:
       - name: counter
         value: 0 
   templates:
-  - name: step-loops
+  - name: step-loop
     steps: 
-      - - name: printOne
+      - - name: printN
           template: task-template 
           arguments: 
-              parameters : [{ name: counter}]
-      - - name: printTwo
-          template: task-template 
-          arguments: 
-              parameters : [{ name: counter}]
+              parameters : [{ name: counter, value: "{{item}}" }]
+          withItems: [ 1, 2, 3, 4, 5, 6, 7 ,8, 9, 10 ]
+
   - name: task-template
+    inputs:
+      parameters: 
+        - name: counter
     script:
       image: python:3.8-slim
       command: [python]
       source: |
-        print(counter)
+        print("{{inputs.parameters.counter}}")
