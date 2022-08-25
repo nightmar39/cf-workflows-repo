@@ -15,9 +15,13 @@ spec:
           template: task-template 
           arguments: 
               parameters : [{ name: counter}]
+      - - name: printTwo
+          template: task-template 
+          arguments: 
+              parameters : [{ name: counter}]
   - name: task-template
     script:
       image: python:3.8-slim
       command: [python]
       source: |
-        print("Task executed.")
+        print(counter)
