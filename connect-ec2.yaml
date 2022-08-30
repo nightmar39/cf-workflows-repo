@@ -8,6 +8,7 @@ spec:
   - name: ssh-secret
     secret:
       secretName: ssh-key-secret
+      defaultMode: 256
   templates:
     - name: ssh-instance
       volumeMounts:
