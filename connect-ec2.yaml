@@ -8,11 +8,11 @@ spec:
   - name: ssh-secret
     secret:
       secretName: ssh-key-secret
-      defaultMode: 0600
+      defaultMode: 256
       items: 
         - key: my-keypair
           path: my-keypair
-          mode: 0600
+          mode: 256
   templates:
     - name: ssh-instance
       script: 
