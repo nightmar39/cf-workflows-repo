@@ -8,7 +8,6 @@ spec:
   - name: ssh-secret
     secret:
       secretName: ssh-key-secret
-      defaultMode: 0400
   templates:
     - name: ssh-instance
       script: 
