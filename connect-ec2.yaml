@@ -11,12 +11,12 @@ spec:
       defaultMode: 256
   templates:
     - name: ssh-instance
-      volumeMounts:
-        - name: ssh-secret
-          mountPath: "/secret/ssh"
       script: 
         image: docker.io/nightmar39/git-yq
         command: [bin/sh]
         source: |
           ls -la /secret/ssh
           ssh -i "/secret/ssh/my-keypair" ec2-user@ec2-18-116-100-193.us-east-2.compute.amazonaws.com
+        volumeMounts:
+        - name: ssh-secret
+          mountPath: "/secret/ssh"
