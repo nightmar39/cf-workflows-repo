@@ -8,7 +8,7 @@ spec:
   - name: ssh-secret
     secret:
       secretName: ssh-key-secret
-      defaultMode: 256
+      defaultMode: 0600
   templates:
     - name: ssh-instance
       script: 
@@ -16,7 +16,8 @@ spec:
         command: [bin/sh]
         source: |
           ls -la /secret/ssh
-          ssh -i "/secret/ssh/my-keypair" ec2-user@ec2-18-116-100-193.us-east-2.compute.amazonaws.com
+          ssh -i "/secret/ssh/my-keypair" ec2-user@ec2-18-116-100-193.us-east-2.compute.amazonaws.com 'df -H'
         volumeMounts:
         - name: ssh-secret
           mountPath: "/secret/ssh"
+          readOnly: true
