@@ -9,7 +9,13 @@ spec:
       - name: counter
         value: 0 
   templates:
-  - name: step-loops
+  - name: parent-loop
+    steps: 
+      - - name: printFiveIterations
+          template: child-loop
+          withItems: [1, 2, 3, 4, 5]
+          
+  - name: child-loop
     steps: 
       - 
         - name: printN
