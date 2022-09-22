@@ -24,6 +24,9 @@ spec:
               secretKeyRef:
                 name: github-token
                 key: token
+        volumeMounts:
+          - name: ssh-secret
+            mountPath: "/secret/ssh"
         source: |
           #!bin/bash 
           git config --global user.email Anthonyzilla94@gmail.com
@@ -31,6 +34,3 @@ spec:
           cd tmp 
           scp -o StrictHostKeyChecking=no -i "/secret/ssh/my-keypair" index.html ec2-user@ec2-3-15-177-10.us-east-2.compute.amazonaws.com:/usr/share/nginx/index.html
           ssh -o StrictHostKeyChecking=no -i "/secret/ssh/my-keypair" ec2-user@ec2-18-116-100-193.us-east-2.compute.amazonaws.com 'sudo systemctl restart nginx'
-        volumeMounts:
-        - name: ssh-secret
-          mountPath: "/secret/ssh"
