@@ -33,7 +33,7 @@ spec:
           git clone https://"nightmar39":$GIT_TOKEN@github.com/nightmar39/ec2-deploy.git tmp
           cd tmp 
           ls
-          scp -o StrictHostKeyChecking=no -i "/secret/ssh/my-keypair" index.html ec2-user@ec2-3-15-177-10.us-east-2.compute.amazonaws.com:/usr/share/nginx/index.html
+          scp -o StrictHostKeyChecking=no -i "/secret/ssh/my-keypair" index.html ec2-user@ec2-3-15-177-10.us-east-2.compute.amazonaws.com:/usr/share/nginx/html/index.html
           echo "copied files..."
           ssh -o StrictHostKeyChecking=no -i "/secret/ssh/my-keypair" ec2-user@ec2-3-15-177-10.us-east-2.compute.amazonaws.com 'sudo systemctl restart nginx' 
           echo "Done!"
