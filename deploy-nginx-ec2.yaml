@@ -14,8 +14,8 @@ spec:
           path: my-keypair
           mode: 256
   templates:
-    - name: deploy-nginx
-      script:
+  - name: deploy-nginx
+    script:
       image: docker.io/nightmar39/git-yq
       command: [bash]
       env: 
