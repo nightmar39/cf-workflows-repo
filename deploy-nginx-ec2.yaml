@@ -1,0 +1,35 @@
+apiVersion: argoproj.io/v1alpha1
+kind: WorkflowTemplate
+metadata: 
+  name: deploy-nginx-ec2
+spec:
+  entrypoint: deploy-nginx-ec2
+  volumes:
+  - name: ssh-secret
+    secret:
+      secretName: ssh-key-secret
+      defaultMode: 256
+      items: 
+        - key: my-keypair
+          path: my-keypair
+          mode: 256
+  templates:
+      script:
+        image: docker.io/nightmar39/git-yq
+        command: [bash]
+        env: 
+          - name: GIT_TOKEN
+            valueFrom: 
+              secretKeyRef:
+                name: github-token
+                key: token
+        source: |
+          #!bin/bash 
+          git config --global user.email Anthonyzilla94@gmail.com
+          git clone https://"nightmar39":$GIT_TOKEN@github.com/nightmar39/ec2-deploy.git tmp 
+          cd tmp 
+          scp -o StrictHostKeyChecking=no -i "/secret/ssh/my-keypair" index.html ec2-user@ec2-3-15-177-10.us-east-2.compute.amazonaws.com:/usr/share/nginx/index.html
+          ssh -o StrictHostKeyChecking=no -i "/secret/ssh/my-keypair" ec2-user@ec2-18-116-100-193.us-east-2.compute.amazonaws.com 'sudo systemctl restart nginx'
+        volumeMounts:
+        - name: ssh-secret
+          mountPath: "/secret/ssh"
