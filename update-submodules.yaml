@@ -1,0 +1,45 @@
+apiVersion: argoproj.io/v1alpha1
+kind: WorkflowTemplate
+metadata: 
+  name: sync-submodules
+spec:
+  entrypoint: sync
+  arguments:
+    parameters:
+    - name: GIT_USER
+    - name: COMMITER_EMAIL
+    - name: BRANCH
+    - name: REPO_OWNER
+    - name: REPO_NAME
+  templates:
+    - name: sync
+      inputs:
+        parameters: 
+          - name: COMMITER_EMAIL
+            value: anthonyzilla94@gmail.com
+          - name: BRANCH
+            value: main
+          - name: GIT_USER
+            value: nightmar39
+          - name: REPO_OWNER
+            value: nightmar39
+          - name: REPO_NAME
+            value: generic-apps
+      script:
+        image: docker.io/nightmar39/git-yq
+        command: [bash]
+        env: 
+          - name: GIT_TOKEN
+            valueFrom: 
+              secretKeyRef:
+                name: github-token
+                key: token
+        source: |
+          #!bin/bash 
+          git config --global user.email "{{inputs.parameters.COMMITER_EMAIL}}" #Should be the same email as the user on the git token
+          git clone -b "{{inputs.parameters.BRANCH}}" https://"{{inputs.parameters.GIT_USER}}":$GIT_TOKEN@github.com/"{{inputs.parameters.REPO_OWNER}}"/"{{inputs.parameters.REPO_NAME}}".git tmp 
+          cd tmp 
+          git submodule update --remote --merge
+          git add --all
+          git commit -m 'updating submodules to commit '
+          git push https://"{{inputs.parameters.GIT_USER}}":$GIT_TOKEN@github.com/"{{inputs.parameters.REPO_OWNER}}"/"{{inputs.parameters.REPO_NAME}}".git "{{inputs.parameters.BRANCH}}"
