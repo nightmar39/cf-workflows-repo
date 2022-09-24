@@ -39,6 +39,7 @@ spec:
           git config --global user.email "{{inputs.parameters.COMMITER_EMAIL}}" #Should be the same email as the user on the git token
           git clone -b "{{inputs.parameters.BRANCH}}" https://"{{inputs.parameters.GIT_USER}}":$GIT_TOKEN@github.com/"{{inputs.parameters.REPO_OWNER}}"/"{{inputs.parameters.REPO_NAME}}".git tmp 
           cd tmp 
+          echo "updating submodules .... "
           git submodule update --remote --merge
           git add --all
           git commit -m 'updating submodules to commit '
