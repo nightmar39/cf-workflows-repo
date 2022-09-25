@@ -47,6 +47,6 @@ spec:
           git checkout $(git log origin/main -1 --pretty=format:"%h")
           cd .. 
           git add . 
-          git commit "fetched commit $SHA for submodule {{inputs.parameters.SUBMODULE_PATH}} "
+          git commit -m "fetched commit $SHA for submodule {{inputs.parameters.SUBMODULE_PATH}} "
           git push https://"{{inputs.parameters.GIT_USER}}":$GIT_TOKEN@github.com/"{{inputs.parameters.REPO_OWNER}}"/"{{inputs.parameters.REPO_NAME}}".git "{{inputs.parameters.BRANCH}}"
           echo "successfully fetched update for commit $SHA in submodule {{inputs.parameters.SUBMODULE_PATH}}"
