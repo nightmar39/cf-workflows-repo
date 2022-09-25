@@ -11,6 +11,7 @@ spec:
     - name: BRANCH
     - name: REPO_OWNER
     - name: REPO_NAME
+    - name: SUBMODULE_PATH
   templates:
     - name: sync
       inputs:
@@ -24,6 +25,8 @@ spec:
           - name: REPO_OWNER
             value: nightmar39
           - name: REPO_NAME
+            value: tiger-mono-repo
+          - name: SUBMODULE_PATH
             value: generic-apps
       script:
         image: docker.io/nightmar39/git-yq
@@ -37,10 +40,12 @@ spec:
         source: |
           #!bin/bash 
           git config --global user.email "{{inputs.parameters.COMMITER_EMAIL}}" #Should be the same email as the user on the git token
-          git clone -b "{{inputs.parameters.BRANCH}}" https://"{{inputs.parameters.GIT_USER}}":$GIT_TOKEN@github.com/"{{inputs.parameters.REPO_OWNER}}"/"{{inputs.parameters.REPO_NAME}}".git tmp 
-          cd tmp 
+          git clone -b "{{inputs.parameters.BRANCH}}" https://"{{inputs.parameters.GIT_USER}}":$GIT_TOKEN@github.com/"{{inputs.parameters.REPO_OWNER}}"/"{{inputs.parameters.REPO_NAME}}".git --recurse-submodules tmp 
+          cd tmp/{{inputs.parameters.SUBMODULE_PATH}} 
           echo "updating submodules .... "
           git submodule update --remote --merge
-          git add --all
-          git commit -m 'updating submodules to commit '
+          git checkout $(git log origin/main -1 --pretty=format:"%h")
+          cd .. 
+          git add . 
+          git commit "fetched commit $SHA for submodule {{inputs.parameters.SUBMODULE_PATH}} "
           git push https://"{{inputs.parameters.GIT_USER}}":$GIT_TOKEN@github.com/"{{inputs.parameters.REPO_OWNER}}"/"{{inputs.parameters.REPO_NAME}}".git "{{inputs.parameters.BRANCH}}"
