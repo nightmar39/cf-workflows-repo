@@ -44,7 +44,7 @@ spec:
           cd tmp 
           export ARTIFACT="{{inputs.parameters.NEW_IMAGE}}":"{{inputs.parameters.NEW_TAG}}"
           echo $ARTIFACT
-          yq -iv '(.spec.template.spec.containers[] | select(.name == "{{inputs.parameters.CONTAINER_NAME}}") | .image) = env(ARTIFACT) ' deployment.yml 
+          yq -iv '(.spec.template.spec.containers[] | select(.name == "{{inputs.parameters.CONTAINER_NAME}}") | .image) = env(ARTIFACT) ' {{inputs.parameters.DEPLOYMENT_FILE}} 
           git add "{{inputs.parameters.DEPLOYMENT_FILE}}"
           git commit -m 'updating tag to "{{inputs.parameters.NEW_TAG}}"'
           git push https://"{{inputs.parameters.GIT_USER}}":$GIT_TOKEN@github.com/"{{inputs.parameters.REPO_OWNER}}"/"{{inputs.parameters.REPO_NAME}}".git "{{inputs.parameters.BRANCH}}"
